@@ -1,46 +1,29 @@
+import { authService, firebaseInstance } from "fbase";
 import React, { useState } from "react";
+import AuthForm from "components/AuthForm";
 
 const Auth = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [newAccount, setNewAccount] = useState(true);
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
-  };
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSocialClick = async (e) => {
+    const { name } = e.target;
+    let provider;
+    if (name === "google") {
+      provider = new firebaseInstance.auth.GoogleAuthProvider();
+    }
+    if (name === "github") {
+      provider = new firebaseInstance.auth.GithubAuthProvider();
+    }
+    await authService.signInWithPopup(provider);
   };
 
   return (
     <div>
-      <form>
-        <input
-          type="email"
-          name="email"
-          value={email}
-          placeholder="Email"
-          onChange={onChange}
-          required
-        />
-      </form>
-      <form>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          placeholder="Password"
-          onChange={onChange}
-          required
-        />
-        <input type="submit" value="Log In" onSubmit={onSubmit} />
-      </form>
-      <div>
-        <button>Continue with Google</button>
-        <button>Continue with Github</button>
-      </div>
+      <AuthForm />
+      <button name="google" onClick={onSocialClick}>
+        Continue with Google
+      </button>
+      <button name="github" onClick={onSocialClick}>
+        Continue with Github
+      </button>
     </div>
   );
 };
